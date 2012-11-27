@@ -5,6 +5,8 @@
 #include <string.h>
 #include <list>
 #include <set>
+#include <vector>
+
 
 struct Couple{
   int numero_variable;
@@ -25,13 +27,16 @@ public:
 
 int main(int argc,char** argv)
 {
-  int i,j;
+  srand(time(NULL));
+  int i,j,k;
   int nb_coefs;
   int coef;
-  int alpha,n;
+  float alpha;
+  int n;
   std::ifstream fichier;
   int nb_variables,nb_contraintes;
   int sum;
+  int borne;
   
   //Scan des arguments
   if(argc>2)
@@ -50,7 +55,7 @@ int main(int argc,char** argv)
      } 
      else if(strcmp(argv[i],"-alpha")==0)
      {
-       alpha=atoi(argv[i+1]);
+       alpha=atof(argv[i+1]);
        i++;
      }
      else if(strcmp(argv[i],"-n")==0)
@@ -75,46 +80,60 @@ int main(int argc,char** argv)
     {
       fichier>>couts[i];
     }
-    std::vector< std::list<int> > coefs_contraintes(nb_contraintes);
+    //std::vector< std::list<int> > coefs_contraintes(nb_contraintes);
+    std::vector<std::vector <int> > coefs_contraintes(nb_contraintes,std::vector<int>(nb_variables,0));
     for(i=0;i<nb_contraintes;i++)
     {
       fichier>>nb_coefs;
+      //coefs_contraintes(nb_variables,0);
       for(j=0;j<nb_coefs;j++)
       {
 	fichier>>coef;
-	coefs_contraintes[i].push_back(coef);
+	coefs_contraintes[i][coef-1]=1;
       }
     }
     
     std::set<Couple, Comcouple> liste_rapports;
     Couple couple;
-    std::list<int>::iterator it;
     for(i=0;i<nb_variables;i++)
     {
 	sum=0;
 	for(j=0;j<nb_contraintes;j++)
 	{
-	  it=coefs_contraintes[j].begin();
-	  while(it!=coefs_contraintes[j].end())
-	  {
-	    if((*it)==i+1)
-	    {
-	      sum++;
-	      break;
-	    }
-	    it++;
-	  }
+	  sum+=coefs_contraintes[j][i];
 	}
         couple.numero_variable=i+1;
 	couple.rapport=(float)sum/couts[i];
 	liste_rapports.insert(couple);
     }
     std::set<Couple, Comcouple>::reverse_iterator rit=liste_rapports.rbegin();
-    while(rit!=liste_rapports.rend())
+    borne=alpha* (*rit).rapport;
+    i=0;
+    while((*rit).rapport>=borne && rit!=liste_rapports.rend())
     {
-      std::cout<<"Variable "<<(*rit).numero_variable<<" valeur "<<(*rit).rapport<<"\n";
       rit++;
+      i++;
     }
+    
+    //i référence le nombre de variables potentielles
+    i=rand()%i;
+    std::cout<<"Variable choisie "<<i<<"\n";
+    for(j=0;j<nb_contraintes;j++)
+    {
+      if(coefs_contraintes[j][i]==1)
+      {
+	for(k=0;k<nb_variables;k++)
+	{
+	  coefs_contraintes[j][k]=0;
+	}
+      }
+    }
+    
+//     while(rit!=liste_rapports.rend())
+//     {
+//       std::cout<<"Variable "<<(*rit).numero_variable<<" valeur "<<(*rit).rapport<<"\n";
+//       rit++;
+//     }
     
     
   }
