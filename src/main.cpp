@@ -139,6 +139,6 @@ int main(int argc,char** argv)
   }
   else
   {
-    std::cout<<"Not enought arguments\n";
+    std::cout<<"Not enought Arguments\n";
   }
 }
