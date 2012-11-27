@@ -1,11 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <list>
 
 int main(int argc,char** argv)
 {
-  int i,j,k;
+  int i,j;
   int nb_coefs;
   int coef;
   int alpha,n;
