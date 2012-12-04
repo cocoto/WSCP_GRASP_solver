@@ -1,5 +1,5 @@
 #modifier la valeur de ce paramètre pour compiler avec options debug ou optimisation
-TYPE=debug
+TYPE=opt
 #	debug / opt
 	
 CC= g++ -Iinclude/
